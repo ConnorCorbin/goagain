@@ -91,6 +91,8 @@ type DoResult struct {
 // of retries has been reached without success.
 var ErrMaxRetries = errors.New("goagain: reached maximum retries")
 
+// Do retries the provided work function until is succeeds, the maximum number of
+// attempts is reached or is cancelled by the context.
 func Do(ctx context.Context, work func() error, options *DoOptions) (*DoResult, error) {
 	var result DoResult
 	defer func() {
