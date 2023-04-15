@@ -1,8 +1,9 @@
-package goagain
+package goagain_test
 
 import (
 	"context"
 	"errors"
+	"goagain"
 	"testing"
 	"time"
 )
@@ -18,7 +19,7 @@ var errEarlyExit = errors.New("early exit")
 
 func TestDo_Attempts(t *testing.T) {
 	t.Run("should have correct DoResult when first attempt is successful", func(tt *testing.T) {
-		r, err := Do(context.TODO(), func() error { return nil }, nil)
+		r, err := goagain.Do(context.TODO(), func() error { return nil }, nil)
 
 		assertErr(tt, err, nil)
 		assertAttempts(tt, r.Attempts, 1)
@@ -28,11 +29,11 @@ func TestDo_Attempts(t *testing.T) {
 	})
 
 	t.Run("should have correct DoResult when maximum retries is reached", func(tt *testing.T) {
-		r, err := Do(context.TODO(), func() error { return errWork }, &DoOptions{
+		r, err := goagain.Do(context.TODO(), func() error { return errWork }, &goagain.DoOptions{
 			MaxRetries: 5,
 		})
 
-		assertErr(tt, err, ErrMaxRetries)
+		assertErr(tt, err, goagain.ErrMaxRetries)
 		assertAttempts(tt, r.Attempts, 5)
 		assertWorkErrs(tt, r.WorkErrors, []error{errWork, errWork, errWork, errWork, errWork})
 		assertStartedAt(tt, r.StartedAt, r.FinishedAt)
@@ -40,9 +41,9 @@ func TestDo_Attempts(t *testing.T) {
 	})
 
 	t.Run("should have correct DoResult when retry function returns an error", func(tt *testing.T) {
-		r, err := Do(context.TODO(), func() error { return errWork }, &DoOptions{
+		r, err := goagain.Do(context.TODO(), func() error { return errWork }, &goagain.DoOptions{
 			MaxRetries: 5,
-			RetryFunc: func(currentResult *DoResult) error {
+			RetryFunc: func(currentResult *goagain.DoResult) error {
 				if currentResult.Attempts == 3 {
 					return errEarlyExit
 				}
@@ -62,7 +63,7 @@ func TestDo_Attempts(t *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 		cancel()
 
-		r, err := Do(ctx, func() error { return errWork }, nil)
+		r, err := goagain.Do(ctx, func() error { return errWork }, nil)
 
 		assertErr(tt, err, ctx.Err())
 		assertAttempts(tt, r.Attempts, 0)
@@ -74,8 +75,8 @@ func TestDo_Attempts(t *testing.T) {
 	t.Run("should have correct DoResult when context is cancelled during the retry function", func(tt *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 
-		r, err := Do(ctx, func() error { return errWork }, &DoOptions{
-			RetryFunc: func(currentResult *DoResult) error {
+		r, err := goagain.Do(ctx, func() error { return errWork }, &goagain.DoOptions{
+			RetryFunc: func(currentResult *goagain.DoResult) error {
 				if currentResult.Attempts == 3 {
 					cancel()
 				}
@@ -94,8 +95,8 @@ func TestDo_Attempts(t *testing.T) {
 	t.Run("should have correct DoResult when context is cancelled during the delay function", func(tt *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 
-		r, err := Do(ctx, func() error { return errWork }, &DoOptions{
-			DelayFunc: func(currentResult *DoResult) time.Duration {
+		r, err := goagain.Do(ctx, func() error { return errWork }, &goagain.DoOptions{
+			DelayFunc: func(currentResult *goagain.DoResult) time.Duration {
 				if currentResult.Attempts == 3 {
 					cancel()
 				}
