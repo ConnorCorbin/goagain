@@ -87,7 +87,7 @@ type DoResult struct {
 	FinishedAt time.Time
 }
 
-// LastWorkErr returns the last error that occured during the execution of the
+// LastWorkErr returns the last error that occurred during the execution of the
 // function.
 func (r *DoResult) LastWorkErr() error {
 	if len(r.WorkErrors) == 0 {
