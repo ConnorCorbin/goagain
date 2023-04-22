@@ -87,6 +87,16 @@ type DoResult struct {
 	FinishedAt time.Time
 }
 
+// LastWorkErr returns the last error that occured during the execution of the
+// function.
+func (r *DoResult) LastWorkErr() error {
+	if len(r.WorkErrors) == 0 {
+		return nil
+	}
+
+	return r.WorkErrors[len(r.WorkErrors)-1]
+}
+
 // ErrMaxRetries is an error returned by a GoAgain function when the maximum number
 // of retries has been reached without success.
 var ErrMaxRetries = errors.New("goagain: reached maximum retries")

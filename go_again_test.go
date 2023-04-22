@@ -8,16 +8,12 @@ import (
 	"time"
 )
 
-const (
-	shortDuration  = 1 * time.Second
-	mediumDuration = 5 * time.Second
-	longDuration   = 10 * time.Second
-)
+const shortDuration = 1 * time.Second
 
 var errWork = errors.New("work error")
 var errEarlyExit = errors.New("early exit")
 
-func TestDo_Attempts(t *testing.T) {
+func TestDo(t *testing.T) {
 	t.Run("should have correct DoResult when first attempt is successful", func(tt *testing.T) {
 		r, err := goagain.Do(context.TODO(), func() error { return nil }, nil)
 
@@ -119,12 +115,6 @@ func assertAttempts(t *testing.T, got uint, want uint) {
 	}
 }
 
-func assertErr(t *testing.T, got error, want error) {
-	if !errors.Is(got, want) {
-		t.Fatalf("unexpected error: \ngot: %v\nwant: %v", got, want)
-	}
-}
-
 func assertWorkErrs(t *testing.T, got []error, want []error) {
 	if len(got) != len(want) {
 		t.Fatalf("unexpected work errors: \ngot: %v\nwant: %v", got, want)
@@ -146,5 +136,31 @@ func assertStartedAt(t *testing.T, gotStartedAt time.Time, gotFinishedAt time.Ti
 func assertFinishedAt(t *testing.T, gotFinishedAt time.Time, gotStartedAt time.Time) {
 	if gotFinishedAt.Before(gotStartedAt) {
 		t.Fatalf("unexpected finish at: finish time is before start time: \nstart: %v\nfinish: %v", gotStartedAt, gotFinishedAt)
+	}
+}
+
+func TestDoResult_LastWorkErr(t *testing.T) {
+	t.Run("j", func(tt *testing.T) {
+		r := goagain.DoResult{}
+
+		gotErr := r.LastWorkErr()
+
+		assertErr(tt, gotErr, nil)
+	})
+
+	t.Run("s", func(tt *testing.T) {
+		r := goagain.DoResult{
+			WorkErrors: []error{errWork, errEarlyExit},
+		}
+
+		gotErr := r.LastWorkErr()
+
+		assertErr(tt, gotErr, errEarlyExit)
+	})
+}
+
+func assertErr(t *testing.T, got error, want error) {
+	if !errors.Is(got, want) {
+		t.Fatalf("unexpected error: \ngot: %v\nwant: %v", got, want)
 	}
 }
