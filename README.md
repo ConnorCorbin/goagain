@@ -32,7 +32,7 @@ import "github.com/ConnorCorbin/goagain"
 Then, install the latest version using:
 
 ```bash
-go install github.com/ConnorCorbin/go-again@latest
+go install github.com/ConnorCorbin/goagain@latest
 ```
 
 -------------------------
