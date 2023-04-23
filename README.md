@@ -17,7 +17,7 @@ Goagain is a simple and flexible way to retry a function that may fail.
 
 ## Requirements
 
-Go 1.20 or higher.
+Go 1.13 or higher.
 
 -------------------------
 

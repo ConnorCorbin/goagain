@@ -3,16 +3,13 @@ package goagain_test
 import (
 	"context"
 	"errors"
-	"goagain"
 	"testing"
 	"time"
+
+	"github.com/ConnorCorbin/goagain"
 )
 
-const (
-	shortDuration  = 1 * time.Second
-	mediumDuration = 5 * time.Second
-	longDuration   = 10 * time.Second
-)
+const shortDuration = 1 * time.Second
 
 var errWork = errors.New("work error")
 var errEarlyExit = errors.New("early exit")
