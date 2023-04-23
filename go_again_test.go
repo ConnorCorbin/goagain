@@ -17,7 +17,7 @@ const (
 var errWork = errors.New("work error")
 var errEarlyExit = errors.New("early exit")
 
-func TestDo_Attempts(t *testing.T) {
+func TestDo(t *testing.T) {
 	t.Run("should have correct DoResult when first attempt is successful", func(tt *testing.T) {
 		r, err := goagain.Do(context.TODO(), func() error { return nil }, nil)
 

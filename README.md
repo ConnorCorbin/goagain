@@ -1,4 +1,4 @@
-# goagain
+# Goagain
 
 Goagain is a simple and flexible way to retry a function that may fail.
 
