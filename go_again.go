@@ -36,10 +36,9 @@
 //	}
 //
 // The Do function returns a DoResult struct containing useful information about the retry
-// operation, including the number of attempts made, a slice of errors that occurred during
-// the execution of the work function and the start and finish time of the operation. This
-// information can be used to diagnose and troubleshoot issues, as well as to measure the overall
-// performance of the retry mechanism.
+// operation. The returned information includes the number of attempts made and a slice of errors
+// that occurred during the execution of the work function. This information can be used to
+// diagnose and troubleshoot
 package goagain
 
 import (
@@ -77,14 +76,6 @@ type DoResult struct {
 	// WorkErrors is a slice of errors that occurred during the execution of
 	// the function. If no errors occurred, the slice will be empty.
 	WorkErrors []error
-
-	// StartedAt is the time at which the first attempt to execute the
-	// function was made.
-	StartedAt time.Time
-
-	// FinishedAt is the time at which the final attempt to execute the
-	// function was made.
-	FinishedAt time.Time
 }
 
 // ErrMaxRetries is an error returned by a GoAgain function when the maximum number
@@ -95,11 +86,6 @@ var ErrMaxRetries = errors.New("goagain: reached maximum retries")
 // attempts is reached or is cancelled by the context.
 func Do(ctx context.Context, work func() error, options *DoOptions) (*DoResult, error) {
 	var result DoResult
-	defer func() {
-		result.FinishedAt = time.Now()
-	}()
-
-	result.StartedAt = time.Now()
 
 	for {
 		select {
