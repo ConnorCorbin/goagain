@@ -36,9 +36,9 @@
 //	}
 //
 // The Do function returns a DoResult struct containing useful information about the retry
-// operation, including the number of attempts made and a slice of errors that occurred during
-// the execution of the work function. This information can be used to diagnose and troubleshoot
-// issues.
+// operation. The returned information includes the number of attempts made and a slice of errors
+// that occurred during the execution of the work function. This information can be used to
+// diagnose and troubleshoot
 package goagain
 
 import (
